@@ -11841,31 +11841,30 @@
     width: window.innerWidth,
     height: window.innerHeight,
     draggable: true
-    // Permite arrastar o quadro
   });
   var layer = new import_konva.default.Layer();
   stage.add(layer);
+  var selectedNote = null;
   function addTextNode(x, y) {
     const textNode = new import_konva.default.Text({
       x,
       y,
-      text: "Digite aqui...",
+      text: "Clique duas vezes...",
       fontSize: 18,
       draggable: true,
       fill: "white",
       padding: 10,
       width: 200,
-      align: "center",
-      fontFamily: "Arial",
-      fontStyle: "bold"
+      align: "left",
+      fontFamily: "Arial"
     });
     const background = new import_konva.default.Rect({
       x: x - 5,
       y: y - 5,
-      width: textNode.width() + 10,
-      height: textNode.height() + 10,
-      fill: "rgba(0, 0, 0, 0.7)",
-      cornerRadius: 8,
+      width: textNode.width() + 20,
+      height: textNode.height() + 20,
+      fill: "rgba(0, 0, 0, 0.8)",
+      cornerRadius: 10,
       draggable: true
     });
     textNode.on("dragmove", () => {
@@ -11876,48 +11875,68 @@
       textNode.position(background.position());
       layer.batchDraw();
     });
+    background.on("click", () => {
+      selectedNote = { textNode, background };
+    });
+    textNode.on("click", () => {
+      selectedNote = { textNode, background };
+    });
     layer.add(background);
     layer.add(textNode);
     layer.draw();
-    textNode.on("dblclick", () => {
-      const textPosition = textNode.getAbsolutePosition();
-      const stageBox = stage.container().getBoundingClientRect();
-      const input = document.createElement("textarea");
-      input.value = textNode.text();
-      input.style.position = "absolute";
-      input.style.top = `${textPosition.y + stageBox.top}px`;
-      input.style.left = `${textPosition.x + stageBox.left}px`;
-      input.style.fontSize = "18px";
-      input.style.width = `${textNode.width()}px`;
-      input.style.height = "auto";
-      input.style.minHeight = "40px";
-      input.style.padding = "10px";
-      input.style.borderRadius = "8px";
-      input.style.background = "rgba(0, 0, 0, 0.8)";
-      input.style.color = "white";
-      input.style.outline = "none";
-      input.style.border = "1px solid #fff";
-      input.style.resize = "none";
-      document.body.appendChild(input);
-      input.focus();
-      function saveText() {
-        textNode.text(input.value);
-        document.body.removeChild(input);
-        layer.draw();
+    textNode.on("dblclick", () => editTextNode(textNode, background));
+  }
+  function editTextNode(textNode, background) {
+    const textPosition = textNode.getAbsolutePosition();
+    const stageBox = stage.container().getBoundingClientRect();
+    const input = document.createElement("textarea");
+    input.value = textNode.text();
+    input.classList.add("text-input");
+    input.style.top = `${textPosition.y + stageBox.top}px`;
+    input.style.left = `${textPosition.x + stageBox.left}px`;
+    input.style.width = `${textNode.width()}px`;
+    input.style.height = `${textNode.height()}px`;
+    document.body.appendChild(input);
+    input.focus();
+    function updateText() {
+      let textValue = input.value.trim();
+      const titleMatch = textValue.match(/#(.*?)#/);
+      if (titleMatch) {
+        textValue = textValue.replace(titleMatch[0], "");
+        textNode.text(`${titleMatch[1]}
+${textValue.trim()}`);
+        textNode.fontSize(18);
+        textNode.fill("white");
+      } else {
+        textNode.text(textValue);
+        textNode.fontSize(18);
+        textNode.fill("white");
       }
-      input.addEventListener("blur", saveText);
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          saveText();
-        }
-      });
+      textNode.width(input.scrollWidth);
+      textNode.height(input.scrollHeight);
+      background.width(textNode.width() + 20);
+      background.height(textNode.height() + 20);
+      document.body.removeChild(input);
+      layer.draw();
+    }
+    input.addEventListener("input", () => {
+      input.style.width = `${input.scrollWidth}px`;
+      input.style.height = `${input.scrollHeight}px`;
     });
+    input.addEventListener("blur", updateText);
   }
   stage.on("dblclick", (e) => {
     if (e.target === stage) {
       const pointer = stage.getPointerPosition();
       addTextNode(pointer.x, pointer.y);
+    }
+  });
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Delete" && selectedNote) {
+      selectedNote.textNode.destroy();
+      selectedNote.background.destroy();
+      selectedNote = null;
+      layer.draw();
     }
   });
   window.addEventListener("resize", () => {

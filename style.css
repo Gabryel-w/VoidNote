@@ -1,29 +1,41 @@
-/* Estilização do Void Note */
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
 body {
-    margin: 0;
-    overflow: hidden;
-    background: #121212;
-    color: white;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  /* Container do Konva */
-  #container {
-    width: 100vw;
-    height: 100vh;
-    cursor: grab;
-  }
-  
-  /* Input de edição do texto */
-  textarea {
-    font-size: 18px;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    outline: none;
-    border: 1px solid white;
-    resize: none;
-  }
-  
+  background-color: #1e1e1e;
+  color: white;
+  overflow: hidden;
+}
+
+/* Container do quadro */
+#container {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Estilização do input de edição */
+.text-input {
+  position: absolute;
+  padding: 10px;
+  font-size: 18px;
+  color: white;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  outline: none;
+  resize: both;
+  min-height: 40px;
+  min-width: 200px;
+  max-width: 80%;
+}
+
+.text-input:focus {
+  border-color: cyan;
+  box-shadow: 0 0 12px cyan;
+}
