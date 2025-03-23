@@ -1,0 +1,29 @@
+/* Estilização do Void Note */
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #121212;
+    color: white;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Container do Konva */
+  #container {
+    width: 100vw;
+    height: 100vh;
+    cursor: grab;
+  }
+  
+  /* Input de edição do texto */
+  textarea {
+    font-size: 18px;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    outline: none;
+    border: 1px solid white;
+    resize: none;
+  }
+  
