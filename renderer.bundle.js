@@ -11912,16 +11912,14 @@ ${textValue.trim()}`);
         textNode.fontSize(18);
         textNode.fill("white");
       }
-      textNode.width(input.scrollWidth);
-      textNode.height(input.scrollHeight);
+      textNode.width(input.offsetWidth);
+      textNode.height(input.offsetHeight);
       background.width(textNode.width() + 20);
       background.height(textNode.height() + 20);
       document.body.removeChild(input);
       layer.draw();
     }
     input.addEventListener("input", () => {
-      input.style.width = `${input.scrollWidth}px`;
-      input.style.height = `${input.scrollHeight}px`;
     });
     input.addEventListener("blur", updateText);
   }

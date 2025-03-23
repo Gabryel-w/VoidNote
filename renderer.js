@@ -98,8 +98,9 @@ function editTextNode(textNode, background) {
       textNode.fill('white');
     }
 
-    textNode.width(input.scrollWidth);
-    textNode.height(input.scrollHeight);
+    // Manter o tamanho do input após o resize
+    textNode.width(input.offsetWidth);
+    textNode.height(input.offsetHeight);
 
     background.width(textNode.width() + 20);
     background.height(textNode.height() + 20);
@@ -109,8 +110,9 @@ function editTextNode(textNode, background) {
   }
 
   input.addEventListener('input', () => {
-    input.style.width = `${input.scrollWidth}px`;
-    input.style.height = `${input.scrollHeight}px`;
+    // Remover ajuste automático de tamanho
+    // input.style.width = `${input.scrollWidth}px`;
+    // input.style.height = `${input.scrollHeight}px`;
   });
 
   input.addEventListener('blur', updateText);
