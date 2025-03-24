@@ -1,13 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Toolbar from "./toolBar";
 
 const NoteEditor = ({ selectedNote, onUpdateNote }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const contentRef = useRef(null);
+  const lastNoteIdRef = useRef(null); // Para rastrear a última nota selecionada
 
   useEffect(() => {
     if (selectedNote) {
-      setTitle(selectedNote.title);
-      setContent(selectedNote.content);
+      // Só atualiza o conteúdo se a nota selecionada for diferente da última
+      if (selectedNote.id !== lastNoteIdRef.current) {
+        setTitle(selectedNote.title);
+        setContent(selectedNote.content);
+        if (contentRef.current) {
+          contentRef.current.innerHTML = selectedNote.content;
+        }
+        lastNoteIdRef.current = selectedNote.id;
+      }
+    } else {
+      setTitle("");
+      setContent("");
+      if (contentRef.current) {
+        contentRef.current.innerHTML = "";
+      }
+      lastNoteIdRef.current = null;
     }
   }, [selectedNote]);
 
@@ -17,10 +34,17 @@ const NoteEditor = ({ selectedNote, onUpdateNote }) => {
     onUpdateNote(selectedNote.id, newTitle, content);
   };
 
-  const handleContentChange = (e) => {
-    const newText = e.target.value;
+  const handleContentChange = () => {
+    if (!contentRef.current) return;
+    const newText = contentRef.current.innerHTML;
     setContent(newText);
     onUpdateNote(selectedNote.id, title, newText);
+  };
+
+  const applyStyle = (e, command, value = null) => {
+    e.preventDefault();
+    document.execCommand(command, false, value);
+    handleContentChange();
   };
 
   if (!selectedNote) {
@@ -29,7 +53,6 @@ const NoteEditor = ({ selectedNote, onUpdateNote }) => {
 
   return (
     <div className="flex-1 p-6">
-      {/* Campo de título editável */}
       <input
         type="text"
         className="w-full text-2xl font-semibold bg-gray-900 text-white border-none focus:outline-none p-2"
@@ -38,11 +61,13 @@ const NoteEditor = ({ selectedNote, onUpdateNote }) => {
         placeholder="Título da Nota"
       />
 
-      {/* Campo de texto para o conteúdo */}
-      <textarea
+      <Toolbar applyStyle={applyStyle} />
+
+      <div
+        ref={contentRef}
         className="w-full h-full p-4 text-white bg-gray-900 border-none resize-none focus:outline-none mt-4"
-        value={content}
-        onChange={handleContentChange}
+        contentEditable
+        onInput={handleContentChange}
         placeholder="Escreva sua nota aqui..."
       />
     </div>

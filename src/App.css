@@ -4,3 +4,27 @@
 
 
 
+/* No seu arquivo CSS global */
+[contenteditable="true"] h1 {
+    font-size: 2em;
+    font-weight: bold;
+    display: block;
+    margin: 0.67em 0;
+    color: white;
+  }
+  
+  [contenteditable="true"] h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    display: block;
+    margin: 0.75em 0;
+    color: white;
+  }
+  
+  [contenteditable="true"] h3 {
+    font-size: 1.17em;
+    font-weight: bold;
+    display: block;
+    margin: 0.83em 0;
+    color: white;
+  }
