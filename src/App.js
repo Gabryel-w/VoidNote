@@ -1,26 +1,38 @@
-import './App.css';
 import { useState } from "react";
-import Sidebar from './components/sideBar';
+import Sidebar from "./components/sideBar";
+import NoteEditor from "./components/noteEditor";
+import "./App.css";
 
 function App() {
   const [notes, setNotes] = useState([
-    { id: 1, title: "Primeira Nota" },
-    { id: 2, title: "Segunda Nota" },
+ 
   ]);
+  const [selectedNoteId, setSelectedNoteId] = useState(null);
 
   const handleAddNote = () => {
-    const newNote = { id: Date.now(), title: "Nova Nota" };
+    const newNote = { id: Date.now(), title: "Nova Nota", content: "" };
     setNotes([...notes, newNote]);
+    setSelectedNoteId(newNote.id);
   };
 
   const handleSelectNote = (id) => {
-    console.log("Nota selecionada:", id);
+    setSelectedNoteId(id);
   };
 
+  const handleUpdateNote = (id, newTitle, newContent) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === id ? { ...note, title: newTitle, content: newContent } : note
+      )
+    );
+  };
+
+  const selectedNote = notes.find((note) => note.id === selectedNoteId);
+
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <Sidebar notes={notes} onSelectNote={handleSelectNote} onAddNote={handleAddNote} />
-      <div className="flex-1 p-6">Conteúdo da nota aqui</div>
+      <NoteEditor selectedNote={selectedNote} onUpdateNote={handleUpdateNote} />
     </div>
   );
 }
