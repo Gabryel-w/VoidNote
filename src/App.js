@@ -1,23 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState } from "react";
+import Sidebar from './components/sideBar';
 
 function App() {
+  const [notes, setNotes] = useState([
+    { id: 1, title: "Primeira Nota" },
+    { id: 2, title: "Segunda Nota" },
+  ]);
+
+  const handleAddNote = () => {
+    const newNote = { id: Date.now(), title: "Nova Nota" };
+    setNotes([...notes, newNote]);
+  };
+
+  const handleSelectNote = (id) => {
+    console.log("Nota selecionada:", id);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="flex">
+      <Sidebar notes={notes} onSelectNote={handleSelectNote} onAddNote={handleAddNote} />
+      <div className="flex-1 p-6">Conteúdo da nota aqui</div>
     </div>
   );
 }
