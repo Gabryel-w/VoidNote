@@ -5,11 +5,10 @@ const NoteEditor = ({ selectedNote, onUpdateNote }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const contentRef = useRef(null);
-  const lastNoteIdRef = useRef(null); // Para rastrear a última nota selecionada
+  const lastNoteIdRef = useRef(null);
 
   useEffect(() => {
     if (selectedNote) {
-      // Só atualiza o conteúdo se a nota selecionada for diferente da última
       if (selectedNote.id !== lastNoteIdRef.current) {
         setTitle(selectedNote.title);
         setContent(selectedNote.content);
@@ -29,9 +28,8 @@ const NoteEditor = ({ selectedNote, onUpdateNote }) => {
   }, [selectedNote]);
 
   const handleTitleChange = (e) => {
-    const newTitle = e.target.value;
-    setTitle(newTitle);
-    onUpdateNote(selectedNote.id, newTitle, content);
+    setTitle(e.target.value);
+    onUpdateNote(selectedNote.id, e.target.value, content);
   };
 
   const handleContentChange = () => {
@@ -41,31 +39,29 @@ const NoteEditor = ({ selectedNote, onUpdateNote }) => {
     onUpdateNote(selectedNote.id, title, newText);
   };
 
-  const applyStyle = (e, command, value = null) => {
-    e.preventDefault();
-    document.execCommand(command, false, value);
-    handleContentChange();
-  };
-
   if (!selectedNote) {
-    return <div className="p-6 text-gray-400">Selecione uma nota para editar</div>;
+    return <div className="p-6 text-gray-400 text-center">Selecione uma nota para editar</div>;
   }
 
   return (
-    <div className="flex-1 p-6">
-      <input
-        type="text"
-        className="w-full text-2xl font-semibold bg-gray-900 text-white border-none focus:outline-none p-2"
-        value={title}
-        onChange={handleTitleChange}
-        placeholder="Título da Nota"
-      />
-
-      <Toolbar applyStyle={applyStyle} />
-
+    <div className="flex flex-col h-screen w-screen pl-64 bg-gray-900 text-white">
+      <div className="p-6 border-b border-gray-700">
+        <input
+          type="text"
+          className="w-full text-2xl font-bold bg-transparent border-b border-gray-700 focus:outline-none p-2"
+          value={title}
+          onChange={handleTitleChange}
+          placeholder="Título da Nota"
+        />
+      </div>
+      <Toolbar applyStyle={(e, command, value) => {
+        e.preventDefault();
+        document.execCommand(command, false, value);
+        handleContentChange();
+      }} />
       <div
         ref={contentRef}
-        className="w-full h-full p-4 text-white bg-gray-900 border-none resize-none focus:outline-none mt-4"
+        className="flex-1 p-6 text-white bg-gray-800 border border-gray-700 rounded-lg focus:outline-none overflow-auto"
         contentEditable
         onInput={handleContentChange}
         placeholder="Escreva sua nota aqui..."
